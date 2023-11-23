@@ -7,8 +7,12 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func NewRouter(categoryController controller.CategoryController, userController controller.UserController, transactionController controller.TransactionController) *httprouter.Router {
+func NewRouter(categoryController controller.CategoryController, userController controller.UserController, transactionController controller.TransactionController, homeController controller.HomeController) *httprouter.Router {
 	router := httprouter.New()
+
+	router.GET("/api/v1/home/total-saldo", homeController.TotalSaldo)
+	router.GET("/api/v1/home/total-spend", homeController.TotalSpend)
+	router.GET("/api/v1/home/total-income", homeController.TotalIncome)
 
 	router.GET("/api/v1/categories", categoryController.FindAll)
 	router.GET("/api/v1/categories/:categoryId", categoryController.FindByID)

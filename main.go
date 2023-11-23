@@ -30,7 +30,10 @@ func main() {
 	transactionService := service.NewTransactionService(transactionRepository, db, validate)
 	transactionController := controller.NewTransactionController(transactionService)
 
-	router := app.NewRouter(categoryController, userController, transactionController)
+	homeService := service.NewHomeService(transactionRepository, db, validate)
+	homeController := controller.NewHomeController(homeService)
+
+	router := app.NewRouter(categoryController, userController, transactionController, homeController)
 
 	server := http.Server{
 		Addr:    "localhost:3000",

@@ -75,3 +75,59 @@ func (repository *TransactionRepositoryImpl) FindAll(ctx context.Context, tx *sq
 
 	return transactions
 }
+
+func (repository *TransactionRepositoryImpl) TotalSaldoCount(ctx context.Context, tx *sql.Tx) float64 {
+	SQL := `SELECT 
+	(SELECT SUM(nominal) FROM transactions WHERE category_id = 1) -
+	(SELECT SUM(nominal) FROM transactions WHERE category_id = 2) AS difference`
+	rows, err := tx.QueryContext(ctx, SQL)
+	helper.PanicIfError(err)
+
+	defer rows.Close()
+
+	var difference float64
+
+	if rows.Next() {
+		err := rows.Scan(&difference)
+		helper.PanicIfError(err)
+		return difference
+	}
+
+	return difference
+}
+
+func (repository *TransactionRepositoryImpl) TotalSpendCount(ctx context.Context, tx *sql.Tx) float64 {
+	SQL := `SELECT SUM(nominal) AS total_spend FROM transactions WHERE category_id = 2`
+	rows, err := tx.QueryContext(ctx, SQL)
+	helper.PanicIfError(err)
+
+	defer rows.Close()
+
+	var totalSpend float64
+
+	if rows.Next() {
+		err := rows.Scan(&totalSpend)
+		helper.PanicIfError(err)
+		return totalSpend
+	}
+
+	return totalSpend
+}
+
+func (repository *TransactionRepositoryImpl) TotalIncomeCount(ctx context.Context, tx *sql.Tx) float64 {
+	SQL := `SELECT SUM(nominal) AS total_spend FROM transactions WHERE category_id = 1`
+	rows, err := tx.QueryContext(ctx, SQL)
+	helper.PanicIfError(err)
+
+	defer rows.Close()
+
+	var totalIncome float64
+
+	if rows.Next() {
+		err := rows.Scan(&totalIncome)
+		helper.PanicIfError(err)
+		return totalIncome
+	}
+
+	return totalIncome
+}
