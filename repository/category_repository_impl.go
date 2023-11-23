@@ -16,8 +16,8 @@ func NewCategoryRepository() CategoryRepository {
 }
 
 func (repository *CategoryRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category {
-	SQL := "INSERT INTO categories(name) VALUES ($1) RETURNING id"
-	row := tx.QueryRowContext(ctx, SQL, category.Name)
+	SQL := "INSERT INTO categories(name,description) VALUES ($1,$2) RETURNING id"
+	row := tx.QueryRowContext(ctx, SQL, category.Name, category.Description)
 	err := row.Scan(&category.ID)
 	helper.PanicIfError(err)
 
@@ -25,9 +25,9 @@ func (repository *CategoryRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, 
 }
 
 func (repository *CategoryRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category {
-	SQL := "UPDATE categories SET name = $1 WHERE id = $2"
+	SQL := "UPDATE categories SET name = $1, description=$2 WHERE id = $3"
 
-	_, err := tx.ExecContext(ctx, SQL, category.Name, category.ID)
+	_, err := tx.ExecContext(ctx, SQL, category.Name, category.Description, category.ID)
 	helper.PanicIfError(err)
 
 	return category
@@ -41,7 +41,7 @@ func (repository *CategoryRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx
 }
 
 func (repository *CategoryRepositoryImpl) FindByID(ctx context.Context, tx *sql.Tx, categoryID int) (domain.Category, error) {
-	SQL := "SELECT id,name FROM categories WHERE id = $1"
+	SQL := "SELECT id,name,description FROM categories WHERE id = $1"
 	rows, err := tx.QueryContext(ctx, SQL, categoryID)
 	helper.PanicIfError(err)
 
@@ -49,7 +49,7 @@ func (repository *CategoryRepositoryImpl) FindByID(ctx context.Context, tx *sql.
 
 	category := domain.Category{}
 	if rows.Next() {
-		err := rows.Scan(&category.ID, &category.Name)
+		err := rows.Scan(&category.ID, &category.Name, &category.Description)
 		helper.PanicIfError(err)
 		return category, nil
 	} else {
@@ -58,7 +58,7 @@ func (repository *CategoryRepositoryImpl) FindByID(ctx context.Context, tx *sql.
 }
 
 func (repository *CategoryRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Category {
-	SQL := "SELECT id,name FROM categories"
+	SQL := "SELECT id,name,description FROM categories"
 	rows, err := tx.QueryContext(ctx, SQL)
 	helper.PanicIfError(err)
 
@@ -67,7 +67,7 @@ func (repository *CategoryRepositoryImpl) FindAll(ctx context.Context, tx *sql.T
 	var categories []domain.Category
 	for rows.Next() {
 		category := domain.Category{}
-		err := rows.Scan(&category.ID, &category.Name)
+		err := rows.Scan(&category.ID, &category.Name, &category.Description)
 		helper.PanicIfError(err)
 
 		categories = append(categories, category)

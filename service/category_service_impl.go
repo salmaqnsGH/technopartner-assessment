@@ -36,7 +36,8 @@ func (service *CategoryServiceImpl) Create(ctx context.Context, req web.Category
 	defer helper.CommitOrRollback(tx)
 
 	category := domain.Category{
-		Name: req.Name,
+		Name:        req.Name,
+		Description: req.Description,
 	}
 
 	category = service.CategoryRepository.Save(ctx, tx, category)
@@ -59,6 +60,7 @@ func (service *CategoryServiceImpl) Update(ctx context.Context, req web.Category
 	}
 
 	category.Name = req.Name
+	category.Description = req.Description
 
 	category = service.CategoryRepository.Update(ctx, tx, category)
 
