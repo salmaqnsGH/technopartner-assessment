@@ -57,9 +57,17 @@ func (repository *TransactionRepositoryImpl) FindByID(ctx context.Context, tx *s
 	}
 }
 
-func (repository *TransactionRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Transaction {
+func (repository *TransactionRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, startDate string, endDate string) []domain.Transaction {
 	SQL := "SELECT id,name,description,nominal,date,category_id FROM transactions"
-	rows, err := tx.QueryContext(ctx, SQL)
+	args := []interface{}{}
+
+	if startDate != "" && endDate != "" {
+		SQL += " WHERE date BETWEEN $1 AND $2"
+		args = append(args, startDate)
+		args = append(args, endDate)
+	}
+	rows, err := tx.QueryContext(ctx, SQL, args...)
+
 	helper.PanicIfError(err)
 
 	defer rows.Close()

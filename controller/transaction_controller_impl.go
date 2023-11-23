@@ -88,7 +88,11 @@ func (controller *TransactionControllerImpl) FindByID(writer http.ResponseWriter
 }
 
 func (controller *TransactionControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	transactionResponses := controller.TransactionService.FindAll(request.Context())
+	queryValues := request.URL.Query()
+	startDateStr := queryValues.Get("start-date")
+	endDateStr := queryValues.Get("end-date")
+
+	transactionResponses := controller.TransactionService.FindAll(request.Context(), startDateStr, endDateStr)
 
 	webResponse := web.WebResponse{
 		Code:   200,

@@ -10,5 +10,5 @@ type TransactionService interface {
 	Update(ctx context.Context, req web.TransactionUpdateRequest) web.TransactionResponse
 	Delete(ctx context.Context, TransactionID int)
 	FindByID(ctx context.Context, TransactionID int) web.TransactionResponse
-	FindAll(ctx context.Context) []web.TransactionResponse
+	FindAll(ctx context.Context, startDate string, endDate string) []web.TransactionResponse
 }

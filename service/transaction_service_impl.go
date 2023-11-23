@@ -101,13 +101,13 @@ func (service *TransactionServiceImpl) FindByID(ctx context.Context, transaction
 	return helper.ToTransactionResponse(transaction)
 }
 
-func (service *TransactionServiceImpl) FindAll(ctx context.Context) []web.TransactionResponse {
+func (service *TransactionServiceImpl) FindAll(ctx context.Context, startDate string, endDate string) []web.TransactionResponse {
 	tx, err := service.DB.Begin()
 	helper.PanicIfError(err)
 
 	defer helper.CommitOrRollback(tx)
 
-	transactions := service.TransactionRepository.FindAll(ctx, tx)
+	transactions := service.TransactionRepository.FindAll(ctx, tx, startDate, endDate)
 
 	return helper.ToTransactionResponses(transactions)
 }
