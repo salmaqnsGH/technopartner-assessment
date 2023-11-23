@@ -22,3 +22,24 @@ func ToCategoryResponses(categories []domain.Category) []web.CategoryResponse {
 
 	return categoryResponses
 }
+
+func ToTransactionResponse(transaction domain.Transaction) web.TransactionResponse {
+	return web.TransactionResponse{
+		ID:          transaction.ID,
+		Name:        transaction.Name,
+		Description: transaction.Description,
+		Date:        transaction.Date,
+		Nominal:     transaction.Nominal,
+		CategoryID:  transaction.CategoryID,
+	}
+}
+
+func ToTransactionResponses(transactions []domain.Transaction) []web.TransactionResponse {
+
+	var transactionResponses []web.TransactionResponse
+	for _, transaction := range transactions {
+		transactionResponses = append(transactionResponses, ToTransactionResponse(transaction))
+	}
+
+	return transactionResponses
+}

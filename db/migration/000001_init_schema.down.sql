@@ -1,2 +1,3 @@
-DROP TABLE categories;
 DROP TABLE users;
+DROP TABLE transactions;
+DROP TABLE categories;
