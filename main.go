@@ -6,6 +6,7 @@ import (
 	"technopartner/test/controller"
 	"technopartner/test/db"
 	"technopartner/test/helper"
+	"technopartner/test/middleware"
 	"technopartner/test/repository"
 	"technopartner/test/service"
 
@@ -21,11 +22,15 @@ func main() {
 	categoryService := service.NewCategoryService(categoryRepository, db, validate)
 	categoryController := controller.NewCategoryController(categoryService)
 
-	router := app.NewRouter(categoryController)
+	userRepository := repository.NewUserRepository()
+	userService := service.NewUserService(userRepository, db, validate)
+	userController := controller.NewUserController(userService)
+
+	router := app.NewRouter(categoryController, userController)
 
 	server := http.Server{
 		Addr:    "localhost:3000",
-		Handler: router,
+		Handler: middleware.NewAuthMiddleware(router),
 	}
 
 	err := server.ListenAndServe()
