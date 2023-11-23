@@ -27,7 +27,7 @@
     ```bash
     go run main.go
     ```
-6. Run in postman with method GET
+6. Run in postman with method based on port you created
   ``` http://localhost:3000 ```
 
 
