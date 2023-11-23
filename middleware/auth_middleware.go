@@ -16,6 +16,11 @@ func NewAuthMiddleware(handler http.Handler) *AuthMiddleware {
 }
 
 func (middleware *AuthMiddleware) ServeHTTP(writer http.ResponseWriter, req *http.Request) {
+	if req.URL.Path == "/api/v1/users/register" || req.URL.Path == "/api/v1/users/login" {
+		middleware.Handler.ServeHTTP(writer, req)
+		return
+	}
+
 	authHeader := req.Header.Get("Authorization")
 
 	if !strings.Contains(authHeader, "Bearer") {
